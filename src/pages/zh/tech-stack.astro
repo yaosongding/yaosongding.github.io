@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../i18n/translations";
+
+const locale = Astro.currentLocale as Locale;
+const path = Astro.url.pathname;
+
+interface StackCategory {
+  name: string;
+  items: string[];
+}
+
+const stack: Record<Locale, StackCategory[]> = {
+  zh: [
+    { name: "语言", items: ["TypeScript", "Python", "Go", "Rust"] },
+    { name: "前端", items: ["React", "Next.js", "Astro", "Tailwind CSS"] },
+    { name: "后端", items: ["Node.js", "PostgreSQL", "Redis", "Docker"] },
+    { name: "工具", items: ["Git", "GitHub Actions", "Linux", "Vim"] },
+  ],
+  en: [
+    { name: "Languages", items: ["TypeScript", "Python", "Go", "Rust"] },
+    { name: "Frontend", items: ["React", "Next.js", "Astro", "Tailwind CSS"] },
+    { name: "Backend", items: ["Node.js", "PostgreSQL", "Redis", "Docker"] },
+    { name: "Tools", items: ["Git", "GitHub Actions", "Linux", "Vim"] },
+  ],
+};
+---
+
+<BaseLayout locale={locale} title={t(locale, "techStack.title")} path={path}>
+  <h1>{t(locale, "techStack.title")}</h1>
+
+  <div class="stack-grid">
+    {
+      stack[locale].map((cat) => (
+        <div class="stack-category">
+          <h3>{cat.name}</h3>
+          <ul>
+            {cat.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: 2rem;
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .stack-category {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+
+  .stack-category h3 {
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-category ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .stack-category li {
+    color: var(--color-text);
+    padding: 0.2rem 0;
+    font-size: 0.95rem;
+  }
+
+  .stack-category li::before {
+    content: "→ ";
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .stack-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

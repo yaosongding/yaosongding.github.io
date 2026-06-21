@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../i18n/translations";
+
+const locale = Astro.currentLocale as Locale;
+const path = Astro.url.pathname;
+---
+
+<BaseLayout locale={locale} title={t(locale, "nav.about")} path={path}>
+  <section class="hero">
+    <h1>
+      {t(locale, "home.greeting")} <span class="accent">{t(locale, "site.title")}</span>
+    </h1>
+    <p class="role">{t(locale, "home.role")}</p>
+    <p class="intro">{t(locale, "home.intro")}</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 3rem 0;
+  }
+
+  .accent {
+    color: var(--color-accent);
+  }
+
+  .role {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+  }
+
+  .intro {
+    max-width: 540px;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+</style>

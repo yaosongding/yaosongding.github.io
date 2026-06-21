@@ -1,0 +1,38 @@
+---
+import type { Locale } from "../i18n/translations";
+import { t } from "../i18n/utils";
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+const otherLocale = locale === "zh" ? "en" : "zh";
+
+const slug = currentPath.replace(`/${locale}`, "") || "/";
+const targetUrl = `/${otherLocale}${slug}`;
+---
+
+<a href={targetUrl} class="lang-switch" hreflang={otherLocale} aria-label="Switch language">
+  {t(locale, "langSwitch.label")}
+</a>
+
+<style>
+  .lang-switch {
+    color: var(--color-text-muted);
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .lang-switch:hover {
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+    border-color: var(--color-accent);
+  }
+</style>

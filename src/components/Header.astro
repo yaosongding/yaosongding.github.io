@@ -1,0 +1,93 @@
+---
+import type { Locale } from "../i18n/translations";
+import { t } from "../i18n/utils";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+
+const navItems = [
+  { key: "about", href: `/${locale}` },
+  { key: "techStack", href: `/${locale}/tech-stack` },
+  { key: "projects", href: `/${locale}/projects` },
+  { key: "blog", href: `/${locale}/blog` },
+  { key: "contact", href: `/${locale}/contact` },
+] as const;
+
+const isActive = (href: string) =>
+  currentPath === href || (href !== `/${locale}` && currentPath.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label={t(locale, "site.title")}>
+      <a href={`/${locale}`} class="nav-brand">
+        {t(locale, "site.title")}
+      </a>
+      <div class="nav-links">
+        {
+          navItems.map((item) => (
+            <a
+              href={item.href}
+              class={isActive(item.href) ? "active" : ""}
+            >
+              {t(locale, `nav.${item.key}` as never)}
+            </a>
+          ))
+        }
+        <LanguageSwitcher locale={locale} currentPath={currentPath} />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 0;
+    margin-bottom: 3rem;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nav-brand {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+
+  .nav-brand:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .nav-links a {
+    color: var(--color-text-muted);
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--color-text);
+    background: var(--color-bg-elevated);
+  }
+</style>

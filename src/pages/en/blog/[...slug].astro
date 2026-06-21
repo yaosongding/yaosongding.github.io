@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GiscusComments from "../../../components/GiscusComments.astro";
+import { t } from "../../../i18n/utils";
+import type { Locale } from "../../../i18n/translations";
+
+export async function getStaticPaths() {
+  const locale = "en";
+  const posts = await getCollection("blog", ({ id }) => id.startsWith(`${locale}/`));
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(`${locale}/`, "").replace(/\.md$/, "") },
+  }));
+}
+
+const { slug } = Astro.params;
+const locale = Astro.currentLocale as Locale;
+
+const post = (
+  await getCollection("blog", (entry) => {
+    const [entryLocale, ...rest] = entry.id.split("/");
+    const entrySlug = rest.join("/").replace(/\.md$/, "");
+    return entryLocale === locale && entrySlug === slug;
+  })
+)[0];
+
+if (!post) {
+  return Astro.redirect(`/${locale}/blog`);
+}
+
+const { Content } = await post.render();
+const path = Astro.url.pathname;
+---
+
+<BaseLayout locale={locale} title={post.data.title} description={post.data.description} path={path}>
+  <article class="post">
+    <header class="post-header">
+      <a href={`/${locale}/blog`} class="back-link">
+        {t(locale, "blog.backToBlog")}
+      </a>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString(locale === "zh" ? "zh-CN" : "en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </time>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+  </article>
+
+  <GiscusComments />
+</BaseLayout>
+
+<style>
+  .post-header { margin-bottom: 2.5rem; }
+  .back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+  .back-link:hover { color: var(--color-accent); }
+  .post-meta {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    margin-top: 0.5rem;
+  }
+  .post-content { font-size: 1.05rem; line-height: 1.8; }
+  .post-content :global(h2) { margin-top: 2.5rem; }
+  .post-content :global(h3) { margin-top: 2rem; }
+  .post-content :global(a) { text-decoration: underline; text-underline-offset: 2px; }
+</style>
