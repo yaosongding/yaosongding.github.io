@@ -1,7 +1,7 @@
 export const translations = {
   zh: {
     site: {
-      title: "Anderson Yao",
+      title: "Ethan",
       description: "个人网站",
     },
     nav: {
@@ -50,7 +50,7 @@ export const translations = {
   },
   en: {
     site: {
-      title: "Anderson Yao",
+      title: "Ethan",
       description: "Personal Website",
     },
     nav: {
